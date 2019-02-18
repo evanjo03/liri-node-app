@@ -25,13 +25,22 @@ function runFunctionSwitch(actionChoice, thing) {
         case "do-what-it-says":
             doWhatItSays(thing);
             break;
-        default: 
+        default:
             console.log("Incorrect Entry.")
     }
 }
 
+//define our logging function, as we use it multiple times
+function log(logInfo) {
+    console.log(logInfo);
+    fs.appendFile("log.txt", logInfo + "\n----------------------------------\n", function (err) {
+        if (err) throw err;
+        console.log("You wrote to the file!")
+    })
+}
+
 //function reads inputs to determine which application method to run
-runFunctionSwitch(action,searchEntry);
+runFunctionSwitch(action, searchEntry);
 
 function concertThis(artist) {
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp&date=upcoming"
@@ -41,8 +50,10 @@ function concertThis(artist) {
         var date = schedArray[0];
         var time = schedArray[1];
 
-        //print to console
-        console.log("Concert Date: " + date + "\nConcert Time: " + time + "\nVenue Name: " + response.data[0].venue.name + "\nVenue Location: " + response.data[0].venue.city + ", " + response.data[0].venue.region);
+        //create output variable to run through logging function
+        var output = "Concert Date: " + date + "\nConcert Time: " + time + "\nVenue Name: " + response.data[0].venue.name + "\nVenue Location: " + response.data[0].venue.city + ", " + response.data[0].venue.region;
+
+        log(output);
         //need name of venue, venue location
     });
 };
@@ -58,8 +69,9 @@ function spotifyThis(name) {
             }
             var songInfo = data.tracks.items[0];
 
-            //print to console
-            console.log("Artist name: " + songInfo.artists[0].name + "\nSong name: " + songInfo.name + "\nAlbum name: " + songInfo.album.name + "\nPreview link: " + songInfo.preview_url);
+            //print to console and log.txt
+            var output = "Artist name: " + songInfo.artists[0].name + "\nSong name: " + songInfo.name + "\nAlbum name: " + songInfo.album.name + "\nPreview link: " + songInfo.preview_url;
+            log(output);
         });
     }
     else {
@@ -69,8 +81,9 @@ function spotifyThis(name) {
             }
             var songInfo = data.tracks.items[0];
 
-            //print to console
-            console.log("Artist name: " + songInfo.artists[0].name + "\nSong name: " + songInfo.name + "\nAlbum name: " + songInfo.album.name + "\nPreview link: " + songInfo.preview_url);
+            //print to console and to log.txt
+            var output = "Artist name: " + songInfo.artists[0].name + "\nSong name: " + songInfo.name + "\nAlbum name: " + songInfo.album.name + "\nPreview link: " + songInfo.preview_url;
+            log(output);
         });
     };
 };
@@ -82,12 +95,14 @@ function movieThis(movie) {
         axios.get(queryUrl).then(function (result) {
             var response = result.data;
 
-            //print to console
-            console.log("Title: " + response.Title "\nRated: " + response.Rated + "\nIMDB Rating: " + response.Ratings[0].Value)
+            //print to console and to log.txt
+            var output = "Title: " + response.Title + "\nRated: " + response.Rated + "\nIMDB Rating: " + response.Ratings[0].Value;
             if (response.Ratings[1]) {
-            console.log("Rotten Tomatoes Rating: " + response.Ratings[1].Value)
+                output += "\nRotten Tomatoes Rating: " + response.Ratings[1].Value;
             }
-            console.log("Country(s) of Production: " + response.Country + "\nLanguage: " + response.Language + "\nPlot: " +  response.Plot)
+            output += "\nCountry(s) of Production: " + response.Country + "\nLanguage: " + response.Language + "\nPlot: " + response.Plot;
+
+            log(output);
         });
     }
     else {
@@ -96,12 +111,14 @@ function movieThis(movie) {
         axios.get(queryUrl).then(function (result) {
             var response = result.data;
 
-             //print to console
-             console.log("Title: " + response.Title "\nRated: " + response.Rated + "\nIMDB Rating: " + response.Ratings[0].Value)
-             if (response.Ratings[1]) {
-             console.log("Rotten Tomatoes Rating: " + response.Ratings[1].Value)
-             }
-             console.log("Country(s) of Production: " + response.Country + "\nLanguage: " + response.Language + "\nPlot: " +  response.Plot)
+            //print to console and to log.txt
+            var output = "Title: " + response.Title + "\nRated: " + response.Rated + "\nIMDB Rating: " + response.Ratings[0].Value;
+            if (response.Ratings[1]) {
+                output += "\nRotten Tomatoes Rating: " + response.Ratings[1].Value;
+            }
+            output += "\nCountry(s) of Production: " + response.Country + "\nLanguage: " + response.Language + "\nPlot: " + response.Plot;
+
+            log(output);
         });
     };
 };
@@ -112,8 +129,8 @@ function doWhatItSays() {
         var splitIndex = data.indexOf(" ")
         action = data.slice(0, splitIndex);
         searchEntry = data.slice(splitIndex + 1);
-        
-        runFunctionSwitch(action,searchEntry)
+
+        runFunctionSwitch(action, searchEntry)
         //should spotify "I want it that way"
     });
 };
