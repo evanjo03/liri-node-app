@@ -128,10 +128,11 @@ function movieThis(movie) {
 function doWhatItSays() {
     fs.readFile("random.txt", "utf8", function (error, data) {
         if (error) throw error;
-        var splitIndex = data.indexOf(",")
-        action = data.slice(0, splitIndex);
-        searchEntry = data.slice(splitIndex + 1);
-
+        var newData = data.replace(/\"/g, '')
+        var splitIndex = newData.indexOf(",")
+        action = newData.slice(0, splitIndex);
+        searchEntry = newData.slice(splitIndex + 1);
+        console.log(searchEntry)
         runFunctionSwitch(action, searchEntry)
         //should spotify "I want it that way"
     });
