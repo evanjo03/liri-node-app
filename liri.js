@@ -1,3 +1,4 @@
+//packages 
 require("dotenv").config();
 var fs = require("fs")
 var axios = require("axios");
@@ -8,29 +9,31 @@ var spotify = new Spotify(keys.spotify);
 
 //variables to store inputs
 var action = process.argv[2];
-var searchEntry = process.argv[3];
+var searchEntryArray = process.argv.slice(3);
+var searchEntry = searchEntryArray.join(" ");
+
 
 //here we define the switch
-function runFunctionSwitch(actionChoice, thing) {
-    switch (actionChoice) {
+function runFunctionSwitch(action, element) {
+    switch (action) {
         case "concert-this":
-            concertThis(thing);
+            concertThis(element);
             break;
         case "spotify-this-song":
-            spotifyThis(thing);
+            spotifyThis(element);
             break;
         case "movie-this":
-            movieThis(thing);
+            movieThis(element);
             break;
         case "do-what-it-says":
-            doWhatItSays(thing);
+            doWhatItSays(element);
             break;
         default:
             console.log("Incorrect Entry.")
     }
 }
 
-//define our logging function, as we use it multiple times
+//define our logging function
 function log(logInfo) {
     console.log(logInfo);
     fs.appendFile("log.txt", logInfo + "\n----------------------------------\n", function (err) {
@@ -62,8 +65,7 @@ function spotifyThis(name) {
     //need artist(s), song name, preview link of song on spotify, album
     //if no song is provided, program defaults to "The Sign" by Ace of Base
     if (!name) {
-        console.log("No name was provided");
-        spotify.search({ type: 'track', query: "The Sign" }, function (err, data) {
+        spotify.search({ type: 'track', query: "The Sign Ace of Base" }, function (err, data) {
             if (err) {
                 return console.log('Error occurred: ' + err);
             }
@@ -126,7 +128,7 @@ function movieThis(movie) {
 function doWhatItSays() {
     fs.readFile("random.txt", "utf8", function (error, data) {
         if (error) throw error;
-        var splitIndex = data.indexOf(" ")
+        var splitIndex = data.indexOf(",")
         action = data.slice(0, splitIndex);
         searchEntry = data.slice(splitIndex + 1);
 
